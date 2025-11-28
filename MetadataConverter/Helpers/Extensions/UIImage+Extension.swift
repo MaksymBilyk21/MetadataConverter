@@ -123,15 +123,30 @@ final class ImageGenerator: ImageGenerating {
             guard let data = baseImage.jpegDataAddingMetadata(gps: gps, exif: exif) else {
                 if let fallbackData = baseImage.jpegData(compressionQuality: 1.0) {
                     let uiImage = UIImage(data: fallbackData) ?? baseImage
-                    result.append(GeneratedImage(uiImage: uiImage, jpegData: fallbackData))
+                    result.append(
+                        GeneratedImage(
+                            uiImage: uiImage,
+                            jpegData: fallbackData,
+                            pointId: params.pointId,
+                            date: params.metadata.date
+                        )
+                    )
                 }
                 continue
             }
             
             let uiImage = UIImage(data: data) ?? baseImage
-            result.append(GeneratedImage(uiImage: uiImage, jpegData: data))
+            result.append(
+                GeneratedImage(
+                    uiImage: uiImage,
+                    jpegData: data,
+                    pointId: params.pointId,
+                    date: params.metadata.date
+                )
+            )
         }
         
         return result
     }
 }
+

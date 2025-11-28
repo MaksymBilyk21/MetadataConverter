@@ -27,11 +27,17 @@ final class NavigationManager: ObservableObject {
     init() {}
     
     public func append(_ screen: ScreenNavigation) {
-        homePath.append(screen)
+        switch appState {
+        case .home:
+            homePath.append(screen)
+        }
     }
     
     public func removeLast(_ k: Int = 1) {
-        homePath.removeLastIfHave(k)
+        switch appState {
+        case .home:
+            homePath.removeLastIfHave(k)
+        }
     }
 }
 
