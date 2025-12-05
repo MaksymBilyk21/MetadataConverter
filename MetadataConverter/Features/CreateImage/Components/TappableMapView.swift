@@ -43,6 +43,8 @@ struct TappableMapView: UIViewRepresentable {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         
+        mapView.showsUserLocation = true
+        
         mapView.setRegion(region, animated: false)
         
         let tap = UITapGestureRecognizer(
@@ -50,6 +52,18 @@ struct TappableMapView: UIViewRepresentable {
             action: #selector(Coordinator.handleTap(_:))
         )
         mapView.addGestureRecognizer(tap)
+        
+        let trackingButton = MKUserTrackingButton(mapView: mapView)
+        trackingButton.translatesAutoresizingMaskIntoConstraints = false
+        trackingButton.layer.backgroundColor = UIColor.systemBackground.cgColor
+        trackingButton.layer.cornerRadius = 6
+        
+        mapView.addSubview(trackingButton)
+        
+        NSLayoutConstraint.activate([
+            trackingButton.trailingAnchor.constraint(equalTo: mapView.trailingAnchor, constant: -16),
+            trackingButton.bottomAnchor.constraint(equalTo: mapView.bottomAnchor, constant: -16)
+        ])
         
         return mapView
     }

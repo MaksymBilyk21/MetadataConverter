@@ -11,6 +11,7 @@ final class CreateImageViewModel: NSObject, ObservableObject {
     @Published var errorMessage: String?
     
     @Published var isShowingMap: Bool = false
+    @Published var showToast: Bool = false
     
     @Published var geocoder = CLGeocoder()
     @Published var mapPoints: [MapPoint] = []
@@ -52,13 +53,19 @@ extension CreateImageViewModel {
             options.uniformTypeIdentifier = "public.jpeg"
             
             let request = PHAssetCreationRequest.forAsset()
-            request.addResource(with: .photo, data: generated.jpegData, options: options)
+            request.addResource(with: .photo,
+                                data: generated.jpegData,
+                                options: options)
         }, completionHandler: { success, error in
             DispatchQueue.main.async {
                 if let error = error {
                     self.errorMessage = "Failed to save image: \(error.localizedDescription)"
                 } else if success {
                     self.errorMessage = nil
+                    
+                    self.showToast = true
+                    
+                    
                 }
             }
         })
@@ -83,8 +90,18 @@ extension CreateImageViewModel {
             DispatchQueue.main.async {
                 if let error = error {
                     self.errorMessage = "Saving failed: \(error.localizedDescription)"
-                } else {
-                    self.errorMessage = "All images have been saved to Photos."
+                    return
+                }
+                
+                guard success else {
+                    self.errorMessage = "Saving failed: unknown error."
+                    return
+                }
+                
+                self.errorMessage = nil
+                self.showToast = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.showToast = false
                 }
             }
         })
